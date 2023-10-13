@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouFund | Money Transfer</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body{
+            font-family: Inter !important;
+        }
+        
+        .containers{
+            max-width: 1440px;
+        }
+        
+        .account .account-detail{
+            max-width: 500px;
+        }
+        </style>
+</head>
+
+<body class='bg-gray-100'>
+    <nav class='bg-white top-0 z-10 text-lg font-semibold text-gray-700 tracking-tight sticky'>
+        <div class='mx-auto containers py-6 flex justify-between'>
+            <img class='w-32 block' src='/static/LogoMarkWithText.png'>
+            <ul class='flex'>
+                <li><a href='/' class='md:ml-8'>Home </a></li>
+                <li><a href='/#about' class='md:ml-8'>About </a></li>
+                <li><a href='/#customercare' class='md:ml-8'>Customer Care </a></li>are </a></li>
+                <li><a href='/loans' target="_new" class='md:ml-8 text-green-500'>Get Loans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="containers mx-auto my-24">
+        <h2 class='font-bold text-gray-800 text-4xl text-center'>Money Transfer</h2>
+        <form class="mt-8 text-center">
+            <select id="sbankID" class="px-4 border-2 py-3 w-96 inline-block">
+                <option value="" selected disabled>Choose your bank</option>
+                <option value="1">Bank of India</option> 
+                <option value="2">Punjab National Bank</option>
+                <option value="3">Union Bank of India</option>       
+                <option value="4">Canara Bank</option>
+                <option value="5">Bank of Baroda</option>
+            </select> </br>
+            <input type='number' id="receiverID" placeholder="RECIEVER ID" class="px-4 border-2 py-3 w-96 inline-block"/> </br>
+            <select id="rbankID" class="px-4 border-2 py-3 w-96 inline-block">
+                <option value="" selected disabled>Choose Receiver's bank</option>
+                <option value="1">Bank of India</option> 
+                <option value="2">Punjab National Bank</option>
+                <option value="3">Union Bank of India</option>       
+                <option value="4">Canara Bank</option>
+                <option value="5">Bank of Baroda</option>
+            </select> </br>
+            <input type='number' id="amount" placeholder="AMOUNT" class="px-4 border-2 py-3 w-96 inline-block"/> </br>
+            <input type='text' id="description" placeholder="DESCRIPTION" class="px-4 border-2 py-3 w-96 inline-block"/> </br>
+            <button type='button' onclick="transfer()" class='bg-green-500 text-white my-2 w-96 inline-block px-4 py-3'>Submit</button>
+        </form>
+    </div>
+</body>
+<script type="text/javascript">
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("apiKey") == null || urlParams.get("apiKey") == ""){
+    alert("Please login first");
+    window.location.href = "/login";
+}
+
+const transfer = () => {
+    var el1 = document.getElementById("receiverID");
+    var el2 = document.getElementById("amount");
+    var el3 = document.getElementById("rbankID");
+    var el4 = document.getElementById("sbankID");
+    var el5 = document.getElementById("description");
+    if(el1.value != "" && el2.value != "" && el3.value != "" && el4.value != ""){
+        fetch("http://127.0.0.1:8000/core/api/v1/transactions", {
+            method: "POST",
+            headers: {'Content-Type':'application/x-www-form-urlencoded'},
+            body: "apiKey=" + urlParams.get("apiKey") + "&receiverID=" + el1.value + "&amount=" + el2.value + "&rbankID=" + el3.value + "&sbankID=" + el4.value + "&description=" + el5.value,
+        }).then((response) => {
+            response.json().then((data) => {
+                if(data.status === 200){
+                    alert("Transaction Successful. Transaction ID = " + data.response.transID);
+                } else if(data.status === 403) {
+                    alert("You don't have an account in this bank");
+                } else {
+                    alert(data.message);
+                }
+            });
+        }).catch((err) => {
+            alert("Error: " + err.message);
+        });
+    } else {
+        alert("Please fill the form properly");
+    }
+};
+</script>
+</html>

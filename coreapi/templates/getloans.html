@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouFund | Loans Offer</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+
+<body class='bg-gray-100'>
+    <nav class='bg-white top-0 z-10 text-lg font-semibold text-gray-700 tracking-tight sticky'>
+        <div class='mx-auto containers py-6 flex justify-between'>
+            <img class='w-32 block' src='/static/LogoMarkWithText.png'>    
+            <ul class='flex'>
+                <li><a href='/' class='md:ml-8'>Home </a></li>
+                <li><a href='/' class='md:ml-8'>About </a></li>
+                <li><a href='/' class='md:ml-8'>Customer Care </a></li>are </a></li>
+                <li><a href='/loans' target="_new" class='md:ml-8 text-green-500'>Get Loans</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" style='background-image: url(/static/slide3.png);'>
+            <div class="containers mx-auto flex flex-col justify-center" style='min-height:572px;'>
+                <span class='block text-7xl text-white leading-snug font-extrabold tracking-tight'>Easy Loans </br>For Education</span> </br>
+                <a href='/login' class='w-24 my-4 py-2 text-center font-semibold text-lg border-2 rounded-sm text-white'>Login</a>
+            </div>
+          </div>
+
+          <div class="swiper-slide" style='background-image: url(/static/slide4.png);'>
+            <div class="containers mx-auto flex flex-col justify-center" style='min-height:572px;'>
+                <span class='block text-7xl text-white leading-snug font-extrabold tracking-tight'>Live Happily </br>With Home Loans</span> </br>
+                <a href='/login' class='w-24 my-4 py-2 text-center font-semibold text-lg border-2 rounded-sm text-white'>Login</a>
+            </div>
+          </div>
+
+          <div class="swiper-slide" style='background-image: url(/static/slide5.png);'>
+            <div class="containers mx-auto flex flex-col justify-center" style='min-height:572px;'>
+                <span class='block text-7xl text-white leading-snug font-extrabold tracking-tight'>Personal Loans </br>Made Easy</span> </br>
+                <a href='/login' class='w-24 my-4 py-2 text-center font-semibold text-lg border-2 rounded-sm text-white'>Login</a>
+            </div>
+          </div>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+
+    <div class="containers mx-auto my-24">
+        <h2 class='font-bold text-4xl text-center'>Loans Description</h2>
+        <table class="border-collapse w-full mt-8">
+            <thead>
+                <tr>
+                    <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Banks</th>
+                    <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Category</th>
+                    <th class="p-3 font-bold uppercase bg-gray-200 text-gray-600 border border-gray-300 hidden lg:table-cell">Description</th>
+                </tr>
+            </thead>
+            <tbody id="loans-data">
+            </tbody>
+        </table>
+    </div>
+
+      <!-- Swiper JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Initialize Swiper -->
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      spaceBetween: 30,
+      centeredSlides: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
+  </script>
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("apiKey") == null || urlParams.get("apiKey") == ""){
+    alert("Please login first");
+    window.location.href = "/login";
+} else {
+    fetch("http://127.0.0.1:8000/core/api/v1/loans?apiKey="+urlParams.get("apiKey")).then((response) => {
+                response.json().then((data) => {
+                    if(data.status === 200){
+                        var loans_table = document.getElementById("loans-data");
+                        for(var i in data.response) {
+                            if(data.response[i].data != null) {
+                                for(var j in data.response[i].data) {
+                                    var _el = document.createElement("tr");
+                                    "bg-white lg:hover:bg-gray-100 flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0".split(" ").forEach((c)=>{
+                                        _el.classList.add(c);
+                                    });
+                                    var _el2 = document.createElement("td");
+                                    "w-full lg:w-auto p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static".split(" ").forEach((c)=>{
+                                        _el2.classList.add(c);
+                                    });
+                                    _el2.innerHTML = data.response[i].bankID;
+                                    _el.appendChild(_el2);
+                                    _el2 = document.createElement("td");
+                                    "w-full lg:w-auto p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static".split(" ").forEach((c)=>{
+                                        _el2.classList.add(c);
+                                    });
+                                    _el2.innerHTML = data.response[i].data[j].category.toUpperCase();
+                                    _el.appendChild(_el2);
+                                    _el2 = document.createElement("td");
+                                    "w-full lg:w-auto p-3 text-gray-800 text-center border border-b block lg:table-cell relative lg:static".split(" ").forEach((c)=>{
+                                        _el2.classList.add(c);
+                                    });
+                                    _el2.innerHTML = data.response[i].data[j].description;
+                                    _el.appendChild(_el2);
+                                    loans_table.appendChild(_el);
+                                }
+                            }
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }).catch((err) => {
+                alert("Error: " + err.message);
+            })
+}
+</script>
+</body>
+</html>
